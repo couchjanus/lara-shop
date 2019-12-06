@@ -8,4 +8,8 @@ Route::namespace('Admin')
             return view('admin.dashboard.index');
         })->name('dashboard'); 
         Route::resource('categories', 'CategoryController');
+        Route::resource('brands', 'BrandController');
+        Route::resource('attributes', 'AttributeController');
+        Route::resource('products', 'ProductController');
+        
 });
