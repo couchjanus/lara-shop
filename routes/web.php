@@ -10,9 +10,14 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', 'FrontController@index');
+Route::view('/', 'front.pages.index');
+Route::get('/category/{slug}', 'Front\CategoryController@show')->name('category.show');
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 require 'admin.php';
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

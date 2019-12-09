@@ -10,6 +10,7 @@ use Illuminate\Http\UploadedFile;
 
 class BrandController extends Controller
 {
+    use UploadAble;
     /**
      * Display a listing of the resource.
      *

@@ -18,7 +18,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::all();
+        $categories = Category::orderBy('id')->get();
         $pageTitle = 'Categories';
         $subTitle = 'List of all categories';
         return view('admin.categories.index', compact('categories', 'pageTitle', 'subTitle'));
@@ -47,7 +47,7 @@ class CategoryController extends Controller
     {
         $this->validate($request, [
             'name'      =>  'required|max:191',
-            'parent_id' =>  'required|not_in:0',
+            // 'parent_id' =>  'required|not_in:0',
             'image'     =>  'mimes:jpg,jpeg,png|max:1000'
         ]);
 
@@ -105,7 +105,7 @@ class CategoryController extends Controller
     {
         $this->validate($request, [
             'name'      =>  'required|max:191',
-            'parent_id' =>  'required|not_in:0',
+            // 'parent_id' =>  'required|not_in:0',
             'image'     =>  'mimes:jpg,jpeg,png|max:1000'
         ]);
 

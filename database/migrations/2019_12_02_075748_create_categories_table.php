@@ -18,7 +18,8 @@ class CreateCategoriesTable extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
-            $table->unsignedInteger('parent_id')->default(1)->nullable();
+            $table->nestedSet();
+            // $table->unsignedInteger('parent_id')->default(1)->nullable();
             $table->boolean('featured')->default(0);
             $table->boolean('menu')->default(1);
             $table->string('image')->nullable();
@@ -33,6 +34,7 @@ class CreateCategoriesTable extends Migration
      */
     public function down()
     {
+        $table->dropNestedSet();
         Schema::dropIfExists('categories');
     }
 }

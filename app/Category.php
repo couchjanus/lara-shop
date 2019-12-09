@@ -4,10 +4,15 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use TypiCMS\NestableTrait;
+use App\Product;
+// use TypiCMS\NestableTrait;
+use Kalnoy\Nestedset\NodeTrait;
 
 class Category extends Model
 {
+    // use NestableTrait;
+    use NodeTrait;
+
     protected $fillable = [
         'name', 'slug', 'description', 'parent_id', 'featured', 'menu', 'image'
     ];
@@ -50,4 +55,5 @@ class Category extends Model
     {
         return $this->belongsToMany(Product::class);
     }
+    
 }

@@ -11,5 +11,6 @@ Route::namespace('Admin')
         Route::resource('brands', 'BrandController');
         Route::resource('attributes', 'AttributeController');
         Route::resource('products', 'ProductController');
-        
+        Route::post('products/images/upload', 'ProductImageController@upload')->name('products.images.upload');
+        Route::get('products/images/{id}/delete', 'ProductImageController@destroy')->name('products.images.delete');
 });

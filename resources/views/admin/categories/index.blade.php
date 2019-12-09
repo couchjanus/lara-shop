@@ -28,12 +28,15 @@
                         </thead>
                         <tbody>
                             @foreach($categories as $category)
-                                @if ($category->id != 1)
                                     <tr>
                                         <td>{{ $category->id }}</td>
                                         <td>{{ $category->name }}</td>
                                         <td>{{ $category->slug }}</td>
-                                        <td>{{ $category->parent->name }}</td>
+                                        <td>
+                                            @if ($category->parent_id)
+                                                {{ $category->parent->name }}
+                                            @endif
+                                        </td>
                                         <td class="text-center">
                                             @if ($category->featured == 1)
                                                 <span class="badge badge-success">Yes</span>
@@ -61,7 +64,6 @@
                                             </div>
                                         </td>
                                     </tr>
-                                @endif
                             @endforeach
                         </tbody>
                     </table>
