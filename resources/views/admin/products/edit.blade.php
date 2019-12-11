@@ -202,7 +202,7 @@
                         <div class="tile-body">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <form action="" class="dropzone" method="POST" id="dropzone" style="border: 2px dashed rgba(0,0,0,0.3)">
+                                    <form action="" class="dropzone" method="POST" id="dropzone" enctype="multipart/form-data" style="border: 2px dashed rgba(0,0,0,0.3)">
                                         <input type="hidden" name="product_id" value="{{ $product->id }}">
                                         @csrf
                                     </form>
