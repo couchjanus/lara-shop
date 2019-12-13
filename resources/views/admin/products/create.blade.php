@@ -75,9 +75,10 @@
                                         <div class="form-group">
                                             <label class="control-label" for="categories">Categories</label>
                                             <select name="categories[]" id="categories" class="form-control" multiple>
-                                                @foreach($categories as $category)
+                                                {!! $tree !!}
+                                                {{-- @foreach($categories as $category)
                                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                                @endforeach
+                                                @endforeach --}}
                                             </select>
                                         </div>
                                     </div>

@@ -77,6 +77,36 @@
                     <button>Upload</button>
                     @csrf
                 </form>
+                
+            <?php
+                $nodes = \App\Category::get()->toTree();
+
+                $traverse = function ($categories, $prefix = '–') use (&$traverse) {
+                    foreach ($categories as $category) {
+                        echo "<option value=".$category->id.">".$prefix.' '.$category->name."</option>";
+                        $traverse($category->children, $prefix.'-');
+                    }
+                };
+                echo '<select name="categories[]" id="categories" class="form-control" multiple>';
+                $traverse($nodes);
+    
+                $traver = function ($categories, $prefix = '–') use (&$traver) {
+                   $ops = '';
+                       foreach ($categories as $category) {
+                           $ops .= "<option value=".$category->id.">".$prefix.' '.$category->name."</option>";
+                           $ops .= $traver($category->children, $prefix.'-');
+                       }
+                       return $ops;
+                   };
+                    
+                   $n = $traver($nodes);
+
+                echo "</select>";
+               
+                ?>
+                <select name="categories[]" id="categories" class="form-control" multiple>
+                {!! $n !!}
+                </select>
             </div>
         </div>
     </body>

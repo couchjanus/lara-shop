@@ -8,8 +8,6 @@ use App\Brand;
 use App\Category;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreProductFormRequest;
-// use App\Traits\UploadAble;
-// use Illuminate\Http\UploadedFile;
 use Illuminate\Database\QueryException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Doctrine\Instantiator\Exception\InvalidArgumentException;
@@ -37,10 +35,25 @@ class ProductController extends Controller
     public function create()
     {
         $brands = Brand::all();
-        $categories = Category::all();
+        // $categories = Category::all();
+        $nodes = Category::get()->toTree();
+        $tree = $this->categoriesTree($nodes);
         $pageTitle = 'Products';
         $subTitle = 'Create Product';
-        return view('admin.products.create', compact('brands', 'categories', 'pageTitle', 'subTitle'));
+        return view('admin.products.create', compact('brands', 'tree', 'pageTitle', 'subTitle'));
+    }
+
+    public function categoriesTree($nodes)
+    {
+        $traverse = function ($categories, $prefix = "&nbsp") use (&$traverse) {
+            $ops = '';
+            foreach ($categories as $category) {
+                $ops .= "<option value=".$category->id.">".$prefix.'&nbsp'.$category->name."</option>";
+                $ops .= $traverse($category->children, $prefix.'&nbsp&nbsp');
+            }
+            return $ops;
+        };
+        return $traverse($nodes);
     }
 
     /**
