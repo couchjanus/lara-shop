@@ -33,7 +33,7 @@ class CreateCategoriesTable extends Migration
      */
     public function down()
     {
-        $table->dropNestedSet();
+        // $table->dropNestedSet();
         Schema::dropIfExists('categories');
     }
 }
