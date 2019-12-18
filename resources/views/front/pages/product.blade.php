@@ -69,6 +69,31 @@
                                         @endif
                                     </div>
                                     <hr>
+                                    <form action="{{ route('product.add.cart') }}" method="POST" role="form" id="addToCart">
+                                        @csrf
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <dl class="dlist-inline">
+                                                    
+                                                </dl>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <dl class="dlist-inline">
+                                                    <dt>Quantity: </dt>
+                                                    <dd>
+                                                        <input class="form-control" type="number" min="1" value="1" max="{{ $product->quantity }}" name="qty" style="width:70px;">
+                                                        <input type="hidden" name="productId" value="{{ $product->id }}">
+                                                        <input type="hidden" name="price" id="finalPrice" value="{{ $product->sale_price != '' ? $product->sale_price : $product->price }}">
+                                                    </dd>
+                                                </dl>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <button type="submit" class="btn btn-success"><i class="fas fa-shopping-cart"></i> Add To Cart</button>
+                                    </form>
                                     
                                 </article>
                             </aside>

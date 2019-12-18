@@ -9,11 +9,15 @@ use App\Repositories\CategoryRepository;
 use App\Contracts\ProductContract;
 use App\Repositories\ProductRepository;
 
+use App\Contracts\AttributeContract;
+use App\Repositories\AttributeRepository;
+
 class RepositoryServiceProvider extends ServiceProvider
 {
     protected $repositories = [
         CategoryContract::class => CategoryRepository::class,
         ProductContract::class => ProductRepository::class,
+        AttributeContract::class => AttributeRepository::class,
     ];
 
     /**
