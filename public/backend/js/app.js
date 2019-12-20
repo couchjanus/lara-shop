@@ -1992,6 +1992,7 @@ __webpack_require__.r(__webpack_exports__);
 
         var _this = this;
 
+        console.log('Update this attribute: ', attributeId, this.value, this.price);
         axios.post('/admin/attributes/update-values', {
           id: attributeId,
           value: _this.value,
@@ -37738,7 +37739,7 @@ var render = function() {
             ],
             staticClass: "form-control",
             attrs: {
-              type: "number",
+              type: "text",
               placeholder: "Enter attribute value price",
               id: "price",
               name: "price"
@@ -37833,8 +37834,8 @@ var render = function() {
             _vm._v(" "),
             _c(
               "tbody",
-              _vm._l(_vm.values, function(value) {
-                return _c("tr", [
+              _vm._l(_vm.values, function(value, iv) {
+                return _c("tr", { key: iv }, [
                   _c(
                     "td",
                     {
@@ -51096,6 +51097,13 @@ try {
 
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+var token = document.head.querySelector('meta[name="csrf-token"]');
+
+if (token) {
+  window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+} else {
+  console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
+}
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting

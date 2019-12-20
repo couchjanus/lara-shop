@@ -2,47 +2,50 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Attribute;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Database\QueryException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Doctrine\Instantiator\Exception\InvalidArgumentException;
+use App\Http\Controllers\BaseController;
+use App\Contracts\AttributeContract;
 
-class AttributeController extends Controller
+class AttributeController extends BaseController
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @var AttributeContract
+     */
+    protected $attributeRepository;
+
+    /**
+     * AttributeController constructor.
+     * @param AttributeContract $attributeRepository
+     */
+    public function __construct(AttributeContract $attributeRepository)
+    {
+        $this->attributeRepository = $attributeRepository;
+    }
+
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
-        
-        $attributes = Attribute::all();
-       
-        $pageTitle = 'Attributes';
-        $subTitle = 'List of all attributes';
-        return view('admin.attributes.index', compact('attributes', 'pageTitle', 'subTitle'));
+        $attributes = $this->attributeRepository->listAttributes();
+
+        $this->setPageTitle('Attributes', 'List of all attributes');
+        return view('admin.attributes.index', compact('attributes'));
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function create()
     {
-        $pageTitle = 'Attributes';
-        $subTitle = 'Create Attribute';
-        return view('admin.attributes.create', compact('pageTitle', 'subTitle'));
+        $this->setPageTitle('Attributes', 'Create Attribute');
+        return view('admin.attributes.create');
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
     {
@@ -54,50 +57,32 @@ class AttributeController extends Controller
 
         $params = $request->except('_token');
 
-        try {
-            $collection = collect($params);
-
-            $is_filterable = $collection->has('is_filterable') ? 1 : 0;
-            $is_required = $collection->has('is_required') ? 1 : 0;
-
-            $merge = $collection->merge(compact('is_filterable', 'is_required'));
-
-            $attribute = new Attribute($merge->all());
-
-            $attribute->save();
-
-        } catch (QueryException $exception) {
-            throw new InvalidArgumentException($exception->getMessage());
-        }
+        $attribute = $this->attributeRepository->createAttribute($params);
 
         if (!$attribute) {
-            return redirect(route('admin.attributes.index'))->with('error', 'Error occurred while creating attribute!');
+            return $this->responseRedirectBack('Error occurred while creating attribute.', 'error', true, true);
         }
-        return redirect(route('admin.attributes.index'))->with('success', 'Attribute Created Successfully!');
+        return $this->responseRedirect('admin.attributes.index', 'Attribute added successfully' ,'success',false, false);
     }
 
-
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Attribute  $attribute
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function edit(Attribute $attribute)
+    public function edit($id)
     {
-        $pageTitle = 'Attributes';
-        $subTitle = 'Edit Attribute : '.$attribute->name;
-        return view('admin.attributes.edit', compact('attribute', 'pageTitle', 'subTitle'));
+        $attribute = $this->attributeRepository->findAttributeById($id);
+
+        $this->setPageTitle('Attributes', 'Edit Attribute : '.$attribute->name);
+        return view('admin.attributes.edit', compact('attribute'));
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Attribute  $attribute
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
      */
-    public function update(Request $request, Attribute $attribute)
+    public function update(Request $request)
     {
         $this->validate($request, [
             'code'          =>  'required',
@@ -108,34 +93,24 @@ class AttributeController extends Controller
         $params = $request->except('_token');
 
         $attribute = $this->attributeRepository->updateAttribute($params);
-        $attribute = $this->findAttributeById($params['id']);
-
-        $collection = collect($params)->except('_token');
-
-        $is_filterable = $collection->has('is_filterable') ? 1 : 0;
-        $is_required = $collection->has('is_required') ? 1 : 0;
-
-        $merge = $collection->merge(compact('is_filterable', 'is_required'));
-        $attribute->update($merge->all());
 
         if (!$attribute) {
-            return redirect(route('admin.attributes.index'))->with('error', 'Error occurred while updating attribute!');
+            return $this->responseRedirectBack('Error occurred while updating attribute.', 'error', true, true);
         }
-        return redirect(route('admin.attributes.index'))->with('success', 'Attribute Updated Successfully!');
+        return $this->responseRedirectBack('Attribute updated successfully' ,'success',false, false);
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Attribute  $attribute
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Attribute $attribute)
+    public function delete($id)
     {
+        $attribute = $this->attributeRepository->deleteAttribute($id);
+
         if (!$attribute) {
-            return redirect(route('admin.attributes.index'))->with('error', 'Error occurred while deleting attribute!');
+            return $this->responseRedirectBack('Error occurred while deleting attribute.', 'error', true, true);
         }
-        $attribute->delete();
-        return redirect(route('admin.attributes.index'))->with('success', 'Attribute deleted Successfully!');
+        return $this->responseRedirect('admin.attributes.index', 'Attribute deleted successfully' ,'success',false, false);
     }
 }

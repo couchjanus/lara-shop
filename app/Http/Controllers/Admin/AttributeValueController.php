@@ -2,87 +2,80 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Illuminate\Http\Request;
 use App\AttributeValue;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Contracts\AttributeContract;
 
 class AttributeValueController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    protected $attributeRepository;
+
+    public function __construct(AttributeContract $attributeRepository)
     {
-       
+        $this->attributeRepository = $attributeRepository;
     }
 
-    
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function getValues(Request $request)
     {
-        //
+        $attributeId = $request->input('id');
+        $attribute = $this->attributeRepository->findAttributeById($attributeId);
+
+        $values = $attribute->values;
+
+        return response()->json($values);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function addValues(Request $request)
     {
-        
+        // dump($request);
+        $item = new AttributeValue();
+        $item->attribute_id = $request->id;
+        $item->value        =  $request->value;
+        $item->price        =  $request->price;
+        dump($item);
+        $item->save();
+        return response()->json($item);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\AttributeValue  $attributeValue
-     * @return \Illuminate\Http\Response
-     */
-    public function show(AttributeValue $attributeValue)
+    public function updateValues(Request $request)
     {
-        //
+        // $attributeValue = AttributeValue::findOrFail($request->valueId);
+
+        $attributeValue = AttributeValue::whereId($request->valueId)->get();
+        dump($attributeValue);
+  
+        // $attributeValue->attribute_id = $request->id;
+        // dump($attributeValue->attribute_id);
+        // $attributeValue->value = $request->value;
+        // dump($attributeValue->value);
+        // $attributeValue->price = floatval($request->price);
+        // dump($attributeValue->price);
+        $item = [
+            'attribute_id' => $request->id,
+            'value' => $request->value,
+            'price' => floatval($request->price)
+        ];
+        dump($item);
+        $attributeValue->update($item);
+        // $attributeValue->update([
+        //     'attribute_id' => $request->id,
+        //     'value' => $request->value,
+        //     'price' => floatval($request->price)
+        // ]);
+        // $attributeValue->save();
+        dump($attributeValue);
+
+        // AttributeValue::whereId($request->valueId)->update($request->all());
+
+        return response()->json($attributeValue);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\AttributeValue  $attributeValue
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(AttributeValue $attributeValue)
+    public function deleteValues(Request $request)
     {
-        //
-    }
+        $attributeValue = AttributeValue::findOrFail($request->input('id'));
+        $attributeValue->delete();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\AttributeValue  $attributeValue
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, AttributeValue $attributeValue)
-    {
-        
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\AttributeValue  $attributeValue
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(AttributeValue $attributeValue)
-    {
-        //    
+        return response()->json(['status' => 'success', 'message' => 'Attribute value deleted successfully.']);
     }
 }
