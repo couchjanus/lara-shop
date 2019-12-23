@@ -2,46 +2,50 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Brand;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Traits\UploadAble;
-use Illuminate\Http\UploadedFile;
+use App\Contracts\BrandContract;
+use App\Http\Controllers\BaseController;
 
-class BrandController extends Controller
+class BrandController extends BaseController
 {
-    use UploadAble;
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @var BrandContract
+     */
+    protected $brandRepository;
+
+    /**
+     * CategoryController constructor.
+     * @param BrandContract $brandRepository
+     */
+    public function __construct(BrandContract $brandRepository)
+    {
+        $this->brandRepository = $brandRepository;
+    }
+
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
-        $brands = Brand::all();
-       
-        $pageTitle = 'Brands';
-        $subTitle = 'List of all brands';
-        return view('admin.brands.index', compact('brands', 'pageTitle', 'subTitle'));
+        $brands = $this->brandRepository->listBrands();
+
+        $this->setPageTitle('Brands', 'List of all brands');
+        return view('admin.brands.index', compact('brands'));
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function create()
     {
-        $pageTitle = 'Brands';
-        $subTitle = 'Create Brand';
-        return view('admin.brands.create', compact('pageTitle', 'subTitle'));
+        $this->setPageTitle('Brands', 'Create Brand');
+        return view('admin.brands.create');
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
     {
@@ -52,21 +56,8 @@ class BrandController extends Controller
 
         $params = $request->except('_token');
 
-        try {
-            $collection = collect($params);
-            $logo = null;
+        $brand = $this->brandRepository->createBrand($params);
 
-            if ($collection->has('logo') && ($params['logo'] instanceof  UploadedFile)) {
-                $logo = $this->uploadOne($params['logo'], 'brands');
-            }
-
-            $merge = $collection->merge(compact('logo'));
-            $brand = new Brand($merge->all());
-            $brand->save();
-
-        } catch (QueryException $exception) {
-            throw new InvalidArgumentException($exception->getMessage());
-        }
         if (!$brand) {
             return redirect(route('admin.brands.index'))->with('error', 'Error occurred while creating brand!');
         }
@@ -74,26 +65,23 @@ class BrandController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Brand  $brand
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function edit(Brand $brand)
+    public function edit($id)
     {
-        $pageTitle = 'Brands';
-        $subTitle = 'Edit Brand : '.$brand->name;
-        return view('admin.brands.edit', compact('brand', 'pageTitle', 'subTitle'));
+        $brand = $this->brandRepository->findBrandById($id);
+
+        $this->setPageTitle('Brands', 'Edit Brand : '.$brand->name);
+        return view('admin.brands.edit', compact('brand'));
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Brand  $brand
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
      */
-    public function update(Request $request, Brand $brand)
+    public function update(Request $request)
     {
         $this->validate($request, [
             'name'      =>  'required|max:191',
@@ -101,20 +89,8 @@ class BrandController extends Controller
         ]);
 
         $params = $request->except('_token');
-        $collection = collect($params)->except('_token');
 
-        if ($collection->has('logo') && ($params['logo'] instanceof  UploadedFile)) {
-
-            if ($brand->logo != null) {
-                $this->deleteOne($brand->logo);
-            }
-
-            $logo = $this->uploadOne($params['logo'], 'brands');
-        }
-
-        $merge = $collection->merge(compact('logo'));
-
-        $brand->update($merge->all());
+        $brand = $this->brandRepository->updateBrand($params);
 
         if (!$brand) {
             return redirect(route('admin.brands.index'))->with('error', 'Error occurred while updating brand!');
@@ -124,22 +100,18 @@ class BrandController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Brand  $brand
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Brand $brand)
+    public function delete($id)
     {
+        $brand = $this->brandRepository->deleteBrand($id);
+
         if (!$brand) {
-            return redirect(route('admin.brands.index'))->with('error', 'Error occurred while deleting brand!');
+            return $this->responseRedirectBack('Error occurred while deleting brand.', 'error', true, true);
         }
-
-        if ($brand->logo != null) {
-            $this->deleteOne($brand->logo);
-        }
-
-        $brand->delete();
+        
         return redirect(route('admin.brands.index'))->with('success', 'Brand deleted Successfully!');
     }
 }
+

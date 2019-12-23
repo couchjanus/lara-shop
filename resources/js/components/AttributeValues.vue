@@ -125,6 +125,7 @@
                         _this.$swal("Success! Value added successfully!", {
                             icon: "success",
                         });
+                        _this.loadValues();
                     }).catch(function (error) {
                         console.log(error);
                     });
@@ -145,7 +146,6 @@
                 } else {
                     let attributeId = this.attributeid;
                     let _this = this;
-                    console.log('Update this attribute: ', attributeId, this.value, this.price);
                     axios.post('/admin/attributes/update-values', {
                         id: attributeId,
                         value: _this.value,
@@ -158,6 +158,7 @@
                         _this.$swal("Success! Value updated successfully!", {
                             icon: "success",
                         });
+                        _this.loadValues();
                     }).catch(function (error) {
                         console.log(error);
                     });

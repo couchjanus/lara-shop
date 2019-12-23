@@ -9,7 +9,7 @@
                         <div class="form-group">
                             <label for="parent">Select an Attribute <span class="m-l-5 text-danger"> *</span></label>
                             <select id=parent class="form-control custom-select mt-15" v-model="attribute" @change="selectAttribute(attribute)">
-                                <option :value="attribute" v-for="attribute in attributes"> {{ attribute.name }} </option>
+                                <option :value="attribute" v-for="(attribute, ai) in attributes" :key="ai"> {{ attribute.name }} </option>
                             </select>
                         </div>
                     </div>
@@ -23,7 +23,7 @@
                     <div class="form-group">
                         <label for="values">Select an value <span class="m-l-5 text-danger"> *</span></label>
                         <select id=values class="form-control custom-select mt-15" v-model="value" @change="selectValue(value)">
-                            <option :value="value" v-for="value in attributeValues"> {{ value.value }} </option>
+                            <option :value="value" v-for="(value, ai) in attributeValues" :key="ai"> {{ value.value }} </option>
                         </select>
                     </div>
                 </div>
@@ -63,7 +63,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="pa in productAttributes">
+                        <tr v-for="(pa, pi) in productAttributes" :key="pi">
                             <td style="width: 25%" class="text-center">{{ pa.value}}</td>
                             <td style="width: 25%" class="text-center">{{ pa.quantity}}</td>
                             <td style="width: 25%" class="text-center">{{ pa.price}}</td>

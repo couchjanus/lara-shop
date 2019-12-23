@@ -15,6 +15,9 @@ use App\Repositories\AttributeRepository;
 use App\Contracts\OrderContract;
 use App\Repositories\OrderRepository;
 
+use App\Contracts\BrandContract;
+use App\Repositories\BrandRepository;
+
 class RepositoryServiceProvider extends ServiceProvider
 {
     protected $repositories = [
@@ -22,6 +25,7 @@ class RepositoryServiceProvider extends ServiceProvider
         ProductContract::class => ProductRepository::class,
         AttributeContract::class => AttributeRepository::class,
         OrderContract::class => OrderRepository::class,
+        BrandContract::class => BrandRepository::class,
     ];
 
     /**

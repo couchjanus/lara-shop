@@ -74,7 +74,36 @@
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <dl class="dlist-inline">
-                                                    
+                                                    @foreach($attributes as $attribute)
+                                                        @if ($product->$attributes)
+                                                        @php
+                                                       //     if ($product->$attributes!=Null)
+                                                                $attributeCheck = in_array($attribute->id, $product->attributes->pluck('attribute_id')->toArray())
+                                                        @endphp
+                                                        @else
+                                                            @php
+                                                        //    else 
+                                                            $attributeCheck = [];
+                                                            
+                                                        @endphp
+                                                        @endif
+                                                        @if ($attributeCheck)
+                                                            <dt>{{ $attribute->name }}: </dt>
+                                                            <dd>
+                                                                <select class="form-control form-control-sm option" style="width:180px;" name="{{ strtolower($attribute->name ) }}">
+                                                                    <option data-price="0" value="0"> Select a {{ $attribute->name }}</option>
+                                                                    @foreach($product->attributes as $attributeValue)
+                                                                        @if ($attributeValue->attribute_id == $attribute->id)
+                                                                            <option
+                                                                                data-price="{{ $attributeValue->price }}"
+                                                                                value="{{ $attributeValue->value }}"> {{ ucwords($attributeValue->value . ' +'. $attributeValue->price) }}
+                                                                            </option>
+                                                                        @endif
+                                                                    @endforeach
+                                                                </select>
+                                                            </dd>
+                                                        @endif
+                                                    @endforeach
                                                 </dl>
                                             </div>
                                         </div>
@@ -94,7 +123,6 @@
                                         <hr>
                                         <button type="submit" class="btn btn-success"><i class="fas fa-shopping-cart"></i> Add To Cart</button>
                                     </form>
-                                    
                                 </article>
                             </aside>
                         </div>

@@ -1970,6 +1970,8 @@ __webpack_require__.r(__webpack_exports__);
           _this.$swal("Success! Value added successfully!", {
             icon: "success"
           });
+
+          _this.loadValues();
         })["catch"](function (error) {
           console.log(error);
         });
@@ -1992,7 +1994,6 @@ __webpack_require__.r(__webpack_exports__);
 
         var _this = this;
 
-        console.log('Update this attribute: ', attributeId, this.value, this.price);
         axios.post('/admin/attributes/update-values', {
           id: attributeId,
           value: _this.value,
@@ -2008,6 +2009,8 @@ __webpack_require__.r(__webpack_exports__);
           _this.$swal("Success! Value updated successfully!", {
             icon: "success"
           });
+
+          _this.loadValues();
         })["catch"](function (error) {
           console.log(error);
         });

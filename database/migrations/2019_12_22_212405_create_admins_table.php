@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAttributeValuesTable extends Migration
+class CreateAdminsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,13 @@ class CreateAttributeValuesTable extends Migration
      */
     public function up()
     {
-        Schema::create('attribute_values', function (Blueprint $table) {
+        Schema::create('admins', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedInteger('attribute_id');
-            $table->foreign('attribute_id')->references('id')->on('attributes');
-            $table->text('value');
-            $table->string('price')->nullable();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->rememberToken();
             $table->timestamps();
         });
     }
@@ -30,6 +31,6 @@ class CreateAttributeValuesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('attribute_values');
+        Schema::dropIfExists('admins');
     }
 }

@@ -10,6 +10,7 @@ use App\Contracts\AttributeContract;
 
 class ProductController extends Controller
 {
+    protected $productRepository;
     protected $attributeRepository;
 
     public function __construct(ProductContract $productRepository, AttributeContract $attributeRepository)
@@ -22,6 +23,8 @@ class ProductController extends Controller
     {
         $product = $this->productRepository->findProductBySlug($slug);
         $attributes = $this->attributeRepository->listAttributes();
+        // dump($attributes);
+        dump($product->$attributes);
         return view('front.pages.product', compact('product', 'attributes'));
     }
 
