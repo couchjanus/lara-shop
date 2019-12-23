@@ -23,8 +23,6 @@ class ProductController extends Controller
     {
         $product = $this->productRepository->findProductBySlug($slug);
         $attributes = $this->attributeRepository->listAttributes();
-        // dump($attributes);
-        dump($product->$attributes);
         return view('front.pages.product', compact('product', 'attributes'));
     }
 

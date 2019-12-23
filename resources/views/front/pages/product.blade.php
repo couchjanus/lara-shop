@@ -75,18 +75,12 @@
                                             <div class="col-sm-12">
                                                 <dl class="dlist-inline">
                                                     @foreach($attributes as $attribute)
-                                                        @if ($product->$attributes)
                                                         @php
-                                                       //     if ($product->$attributes!=Null)
-                                                                $attributeCheck = in_array($attribute->id, $product->attributes->pluck('attribute_id')->toArray())
+                                                           if ($product->attributes->count()>0) {
+                                                                $attributeCheck = in_array($attribute->id,$product->attributes->pluck('attribute_id')->toArray());
+                                                            } else { $attributeCheck = []; } 
                                                         @endphp
-                                                        @else
-                                                            @php
-                                                        //    else 
-                                                            $attributeCheck = [];
-                                                            
-                                                        @endphp
-                                                        @endif
+                                                        
                                                         @if ($attributeCheck)
                                                             <dt>{{ $attribute->name }}: </dt>
                                                             <dd>
